@@ -100,54 +100,73 @@ const propiedades_venta = [
     
 ];
 
-// propiedades.js
-    document.addEventListener('DOMContentLoaded', function () {
-        const propiedadesAlquilerContainer = document.getElementById('propiedades-alquiler');
-        const propiedadesVentaContainer = document.getElementById('propiedades-venta');
-    
-        function generarPropiedadHTML(propiedad) {
-            function obtenerIcono(valor) {
-                return valor ? '✅' : '❌';
-            }
-    
-            function obtenerMensaje(valor, afirmativo, negativo) {
-                return valor ? afirmativo : negativo;
-            }
-    
-            return `
-                <div class="row">
-                    <div class="col-md-4 mb-4">
-                                <div class="card">
-                                    <img src="${propiedad.src}" alt="${propiedad.nombre} class="card-img-top">
-                                    <div class="card-body">
-                                        <h2 class="card-title">${propiedad.nombre}</h2>
-                                        <p class="card-text">${propiedad.descripcion}</p>
-                                        <p>Ubicación: <i class="fas fa-map-marker-alt"></i> ${propiedad.ubicacion}</p>
-                                        <p>Habitaciones: <i class="fas fa-bed"></i> ${propiedad.habitaciones}</p>
-                                        <p>Baños:  <i class="fas fa-bath"></i> ${propiedad.baños}</p>
-                                        <p>Costo: <i class="fas fa-dollar-sign"></i> ${propiedad.costo}</p>
-                                        <p>Fumar: ${obtenerIcono(propiedad.smoke)} ${obtenerMensaje(propiedad.smoke, 'Permitido', 'Prohibido')}</p>
-                                        <p>Mascotas: ${obtenerIcono(propiedad.pets)} ${obtenerMensaje(propiedad.pets, 'Permitido', 'Prohibido')}</p>
-                                    </div>
-                                </div>
-                            </div>
-                    </section>
-                </div>
-            `;
-        }
-    
-        function agregarPropiedadesAlContenedor(container, propiedades, cantidad) {
-            // Agregar solo la cantidad especificada de propiedades
-            for (let i = 0; i < cantidad; i++) {
-                const propiedadHTML = generarPropiedadHTML(propiedades[i]);
-                container.innerHTML += propiedadHTML;
-            }
-        }
-    
-        // Agregar solo 3 propiedades en alquiler
-        agregarPropiedadesAlContenedor(propiedadesAlquilerContainer, propiedades_alquiler, 3);
-    
-        // Agregar solo 3 propiedades en venta
-        agregarPropiedadesAlContenedor(propiedadesVentaContainer, propiedades_venta, 3);
-    });
+document.addEventListener('DOMContentLoaded', function () {
+    const propiedadesAlquilerContainer = document.getElementById('propiedades-alquiler');
+    const propiedadesVentaContainer = document.getElementById('propiedades-venta');
 
+    function obtenerIconoYMensaje(valor, mensajeAfirmativo, mensajeNegativo, iconoAfirmativo, iconoNegativo) {
+        if (valor) {
+            return {
+                mensaje: `<p class="text-success"><i class="${iconoAfirmativo}"></i> ${mensajeAfirmativo}</p>`,
+                icono: `<i class="${iconoAfirmativo}"></i>`
+            };
+        } else {
+            return {
+                mensaje: `<p class="text-danger"><i class="${iconoNegativo}"></i> ${mensajeNegativo}</p>`,
+                icono: `<i class="${iconoNegativo}"></i>`
+            };
+        }
+    }
+
+    function generarPropiedadHTML(propiedad) {
+        const fumar = obtenerIconoYMensaje(
+            propiedad.smoke,
+            'Permitido fumar',
+            'No se permite fumar',
+            'fas fa-smoking',
+            'fas fa-smoking-ban'
+        );
+
+        const mascotas = obtenerIconoYMensaje(
+            propiedad.pets,
+            'Mascotas permitidas',
+            'No se permiten mascotas',
+            'fas fa-paw',
+            'fas fa-paw'
+        );
+
+        return `
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <img src="${propiedad.src}" alt="${propiedad.nombre}" class="card-img-top">
+                        <div class="card-body">
+                            <h2 class="card-title">${propiedad.nombre}</h2>
+                            <p class="card-text">${propiedad.descripcion}</p>
+                            <p>Ubicación: <i class="fas fa-map-marker-alt"></i> ${propiedad.ubicacion}</p>
+                            <p>Habitaciones: <i class="fas fa-bed"></i> ${propiedad.habitaciones}</p>
+                            <p>Baños:  <i class="fas fa-bath"></i> ${propiedad.baños}</p>
+                            <p>Costo: <i class="fas fa-dollar-sign"></i> ${propiedad.costo}</p>
+                            ${fumar.mensaje}
+                            ${mascotas.mensaje}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    function agregarPropiedadesAlContenedor(container, propiedades, cantidad) {
+        // Agregar solo la cantidad especificada de propiedades
+        for (let i = 0; i < cantidad; i++) {
+            const propiedadHTML = generarPropiedadHTML(propiedades[i]);
+            container.innerHTML += propiedadHTML;
+        }
+    }
+
+    // Agregar solo 3 propiedades en alquiler
+    agregarPropiedadesAlContenedor(propiedadesAlquilerContainer, propiedades_alquiler, 3);
+
+    // Agregar solo 3 propiedades en venta
+    agregarPropiedadesAlContenedor(propiedadesVentaContainer, propiedades_venta, 3);
+});
